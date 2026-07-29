@@ -15,6 +15,12 @@ export interface Trade {
   tags: string | null
   notes: string | null
   created_at: string
+  /** DB-only fields mapped into type */
+  exit_reason?: string | null
+  bars_held?: number | null
+  pnl_pct?: number | null
+  commission?: number | null
+  slippage?: number | null
 }
 
 export interface Stats {
