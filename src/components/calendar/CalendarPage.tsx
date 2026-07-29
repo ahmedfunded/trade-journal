@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { motion } from 'motion/react'
 import { useCalendar } from '@/hooks/useData'
+import { Card, CardContent } from '@/components/ui/card'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 export function CalendarPage({ isMobile }: { isMobile?: boolean }) {
   const [year, setYear] = useState(new Date().getFullYear())
@@ -37,150 +39,102 @@ export function CalendarPage({ isMobile }: { isMobile?: boolean }) {
   const lossDays = data.filter(d => d.pnl < 0).length
 
   return (
-    <div>
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-        style={{ marginBottom: 12 }}
-      >
-        <div style={{
-          display: 'flex',
-          flexDirection: isMobile ? 'column' : 'row',
-          justifyContent: 'space-between',
-          alignItems: isMobile ? 'flex-start' : 'flex-start',
-          gap: 8,
-        }}>
+    <div className="space-y-4">
+      {/* Header */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+        <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} justify-between items-start gap-2`}>
           <div>
-            <h2 style={{ fontSize: isMobile ? 18 : 22, fontWeight: 600, color: '#fff', margin: 0 }}>Calendar</h2>
-            <p style={{ fontSize: 13, color: '#71717a', margin: '4px 0 0' }}>Daily P&L heatmap</p>
+            <h2 className={`${isMobile ? 'text-lg' : 'text-xl'} font-semibold text-text-primary m-0`}>
+              Calendar
+            </h2>
+            <p className="text-xs text-text-secondary mt-1">Daily P&L heatmap</p>
           </div>
-          <div style={{
-            display: 'flex',
-            flexDirection: isMobile ? 'column' : 'row',
-            gap: isMobile ? 6 : 12,
-            alignItems: isMobile ? 'flex-start' : 'center',
-          }}>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <span style={{ fontSize: 11, color: '#22c55e' }}>▲ {winDays} win</span>
-              <span style={{ fontSize: 11, color: '#ef4444' }}>▼ {lossDays} loss</span>
+          <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-2 items-${isMobile ? 'start' : 'center'}`}>
+            <div className="flex gap-2">
+              <span className="text-xs text-green">▲ {winDays} win</span>
+              <span className="text-xs text-red">▼ {lossDays} loss</span>
             </div>
-            <div style={{ display: 'flex', gap: 4 }}>
+            <div className="flex gap-1">
               <button onClick={() => setYear(y => y - 1)}
-                style={{
-                  padding: '6px 10px', borderRadius: 6, border: '1px solid #1e1e2e',
-                  background: '#12121a', color: '#e4e4e7', fontSize: 11, cursor: 'pointer',
-                }}>
-                ←
+                className="p-1.5 rounded-md border border-border-subtle bg-bg-card text-text-primary cursor-pointer">
+                <ChevronLeft className="w-3.5 h-3.5" />
               </button>
               <button onClick={() => setYear(new Date().getFullYear())}
-                style={{
-                  padding: '6px 10px', borderRadius: 6, border: '1px solid #1e1e2e',
-                  background: '#6366f1', color: '#fff', fontSize: 11, cursor: 'pointer', fontWeight: 600,
-                }}>
+                className="px-2.5 py-1.5 rounded-md border border-border-subtle bg-accent text-white text-xs font-semibold cursor-pointer">
                 {year}
               </button>
               <button onClick={() => setYear(y => y + 1)}
-                style={{
-                  padding: '6px 10px', borderRadius: 6, border: '1px solid #1e1e2e',
-                  background: '#12121a', color: '#e4e4e7', fontSize: 11, cursor: 'pointer',
-                }}>
-                →
+                className="p-1.5 rounded-md border border-border-subtle bg-bg-card text-text-primary cursor-pointer">
+                <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
         </div>
       </motion.div>
 
-      {/* Summary */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.05 }}
-        className="glass-card"
-        style={{
-          padding: isMobile ? 12 : 16,
-          marginBottom: 12,
-          display: 'grid',
-          gridTemplateColumns: isMobile ? 'repeat(5, 1fr)' : 'repeat(5, 1fr)',
-        }}
-      >
-        {[
-          { label: 'Year P&L', value: `${totalPnL >= 0 ? '+' : ''}$${totalPnL.toFixed(0)}`, color: totalPnL >= 0 ? '#22c55e' : '#ef4444' },
-          { label: 'Days', value: String(tradingDays), color: '#fff' },
-          { label: 'Win', value: String(winDays), color: '#22c55e' },
-          { label: 'Loss', value: String(lossDays), color: '#ef4444' },
-          { label: 'Win%', value: `${tradingDays > 0 ? ((winDays / tradingDays) * 100).toFixed(0) : 0}%`, color: '#6366f1' },
-        ].map(item => (
-          <div key={item.label} style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 9, color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 2 }}>{item.label}</div>
-            <div style={{ fontSize: isMobile ? 13 : 18, fontWeight: 700, color: item.color }}>{item.value}</div>
-          </div>
-        ))}
+      {/* Summary bar */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+        <Card>
+          <CardContent className="p-3 flex gap-4 text-xs">
+            <span className="text-text-secondary">Trading Days: <strong className="text-text-primary">{tradingDays}</strong></span>
+            <span className="text-text-secondary">Total P&L: <strong className={totalPnL >= 0 ? 'text-green' : 'text-red'}>
+              ${totalPnL >= 0 ? '+' : ''}{Math.round(totalPnL)}
+            </strong></span>
+            <span className="text-text-secondary">Win Days: <strong className="text-green">{winDays}</strong></span>
+            <span className="text-text-secondary">Loss Days: <strong className="text-red">{lossDays}</strong></span>
+          </CardContent>
+        </Card>
       </motion.div>
 
       {/* Calendar Grid */}
       {loading ? (
-        <div style={{ padding: 40, display: 'flex', justifyContent: 'center' }}>
-          <motion.div animate={{ rotate: 360 }}
+        <div className="flex justify-center py-12">
+          <motion.div
+            animate={{ rotate: 360 }}
             transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-            style={{ width: 24, height: 24, border: '2px solid #1e1e2e', borderTopColor: '#6366f1', borderRadius: '50%' }}
+            className="w-8 h-8 border-2 border-border-subtle border-t-accent rounded-full"
           />
         </div>
       ) : (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
-          gap: isMobile ? 6 : 12,
-        }}>
+        <div className={`grid ${isMobile ? 'grid-cols-2 gap-2' : 'grid-cols-3 gap-3'}`}>
           {months.map((month, mi) => (
             <motion.div
               key={month.name}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: mi * 0.03 }}
-              className="glass-card"
-              style={{ padding: isMobile ? 8 : 12 }}
             >
-              <h4 style={{
-                fontSize: 10, color: '#a1a1aa', margin: '0 0 6px',
-                fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px',
-              }}>
-                {month.name} {year}
-              </h4>
-              <div style={{
-                display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2,
-              }}>
-                {!isMobile && ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
-                  <span key={d} style={{
-                    fontSize: 8, color: '#3b3b52', textAlign: 'center',
-                    padding: '2px 0', fontWeight: 600,
-                  }}>
-                    {d}
-                  </span>
-                ))}
-                {Array.from({ length: month.startPad }).map((_, i) => (
-                  <div key={`empty-${i}`} />
-                ))}
-                {month.days.map(d => (
-                  <motion.div
-                    key={d.date}
-                    whileHover={{ scale: 1.2 }}
-                    style={{
-                      aspectRatio: '1',
-                      borderRadius: 3,
-                      background: getColor(d.pnl),
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: isMobile ? 7 : 8,
-                      color: d.pnl !== null ? '#e4e4e7' : '#52525b',
-                      fontWeight: d.pnl !== null ? 600 : 400,
-                      cursor: d.pnl !== null ? 'pointer' : 'default',
-                    }}
-                    title={d.pnl !== null ? `${d.date}: $${d.pnl.toFixed(2)}` : d.date}
-                  >
-                    {d.day}
-                  </motion.div>
-                ))}
-              </div>
+              <Card>
+                <CardContent className={`${isMobile ? 'p-2' : 'p-3'}`}>
+                  <h4 className="text-[10px] font-semibold uppercase tracking-wider text-text-tertiary mb-1.5">
+                    {month.name} {year}
+                  </h4>
+                  <div className="grid grid-cols-7 gap-0.5">
+                    {!isMobile && ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
+                      <span key={d} className="text-[7px] text-text-muted text-center py-0.5 font-semibold">{d}</span>
+                    ))}
+                    {Array.from({ length: month.startPad }).map((_, i) => (
+                      <div key={`empty-${i}`} />
+                    ))}
+                    {month.days.map(d => (
+                      <motion.div
+                        key={d.date}
+                        whileHover={{ scale: 1.2 }}
+                        className="aspect-square rounded-sm flex items-center justify-center cursor-default"
+                        style={{
+                          background: getColor(d.pnl),
+                          fontSize: isMobile ? 7 : 8,
+                          color: d.pnl !== null ? '#e4e4e7' : '#52525b',
+                          fontWeight: d.pnl !== null ? 600 : 400,
+                        }}
+                        title={d.pnl !== null ? `${d.date}: $${d.pnl.toFixed(2)}` : d.date}
+                      >
+                        {d.day}
+                      </motion.div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
           ))}
         </div>
@@ -191,12 +145,7 @@ export function CalendarPage({ isMobile }: { isMobile?: boolean }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
-        style={{
-          display: 'flex', justifyContent: 'center',
-          gap: isMobile ? 8 : 16,
-          marginTop: 12,
-          flexWrap: 'wrap',
-        }}
+        className="flex justify-center gap-3 flex-wrap"
       >
         {[
           { color: 'rgba(34,197,94,0.6)', label: 'Big Win' },
@@ -204,9 +153,9 @@ export function CalendarPage({ isMobile }: { isMobile?: boolean }) {
           { color: 'rgba(239,68,68,0.2)', label: 'Small Loss' },
           { color: 'rgba(239,68,68,0.6)', label: 'Big Loss' },
         ].map(item => (
-          <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <div style={{ width: 10, height: 10, borderRadius: 2, background: item.color }} />
-            <span style={{ fontSize: 10, color: '#71717a' }}>{item.label}</span>
+          <div key={item.label} className="flex items-center gap-1">
+            <div className="w-2.5 h-2.5 rounded-sm" style={{ background: item.color }} />
+            <span className="text-[10px] text-text-secondary">{item.label}</span>
           </div>
         ))}
       </motion.div>

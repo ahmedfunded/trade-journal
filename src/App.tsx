@@ -5,12 +5,13 @@ import { TradesPage } from './components/trades/TradesPage'
 import { AnalyticsPage } from './components/analytics/AnalyticsPage'
 import { CalendarPage } from './components/calendar/CalendarPage'
 import { useMediaQuery } from './hooks/useMediaQuery'
+import { LayoutDashboard, ListOrdered, BarChart3, Calendar, Menu, X } from 'lucide-react'
 
 const TABS = [
-  { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-  { id: 'trades', label: 'Trades', icon: '📝' },
-  { id: 'analytics', label: 'Analytics', icon: '📈' },
-  { id: 'calendar', label: 'Calendar', icon: '📅' },
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'trades', label: 'Trades', icon: ListOrdered },
+  { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+  { id: 'calendar', label: 'Calendar', icon: Calendar },
 ]
 
 function App() {
@@ -36,112 +37,89 @@ function App() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0f' }}>
+    <div className="min-h-screen bg-bg-main">
       {/* Header */}
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        style={{
-          background: 'rgba(18, 18, 26, 0.8)',
-          backdropFilter: 'blur(12px)',
-          borderBottom: '1px solid #1e1e2e',
-          padding: isMobile ? '0 12px' : '0 24px',
-          display: 'flex',
-          alignItems: 'center',
-          height: 56,
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
-        }}
+        className="sticky top-0 z-50 h-14 flex items-center px-3 md:px-6"
+        style={{ background: 'rgba(18, 18, 26, 0.8)', backdropFilter: 'blur(12px)', borderBottom: '1px solid #1e1e2e' }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: isMobile ? 8 : 32 }}>
-          <span style={{ fontSize: 20 }}>📊</span>
+        <div className={`flex items-center gap-2 ${isMobile ? 'mr-2' : 'mr-8'}`}>
+          <LayoutDashboard className="w-5 h-5 text-accent" />
           {!isMobile && (
             <>
-              <h1 style={{ fontSize: 16, fontWeight: 600, color: '#fff', margin: 0, letterSpacing: '-0.3px' }}>
+              <h1 className="text-sm font-semibold text-text-primary m-0 tracking-tight">
                 Trade Journal
               </h1>
-              <span style={{
-                background: 'linear-gradient(135deg, #6366f1, #c084fc)',
-                color: '#fff', fontSize: 9, padding: '2px 8px', borderRadius: 10, fontWeight: 500,
-              }}>PRO</span>
+              <span className="bg-gradient-to-r from-accent to-purple-400 text-white text-[9px] px-2 py-0.5 rounded-full font-medium">
+                PRO
+              </span>
             </>
           )}
         </div>
 
         {isMobile ? (
           <>
-            <div style={{ flex: 1 }} />
+            <div className="flex-1" />
             <button onClick={() => setMenuOpen(!menuOpen)}
-              style={{
-                background: 'transparent', border: 'none', color: '#e4e4e7',
-                fontSize: 20, cursor: 'pointer', padding: 8,
-              }}
-            >
-              {menuOpen ? '✕' : '☰'}
+              className="bg-transparent border-none text-text-primary cursor-pointer p-2">
+              {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
             {menuOpen && (
-              <div style={{
-                position: 'fixed', top: 56, left: 0, right: 0,
-                background: '#12121a', borderBottom: '1px solid #1e1e2e',
-                padding: 8, zIndex: 99, display: 'flex', flexDirection: 'column', gap: 2,
-              }}>
-                {TABS.map(tab => (
-                  <button
-                    key={tab.id}
-                    onClick={() => navigate(tab.id)}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 8,
-                      padding: '10px 12px', borderRadius: 8,
-                      fontSize: 13, fontWeight: 500, border: 'none', cursor: 'pointer',
-                      background: activeTab === tab.id ? '#6366f1' : 'transparent',
-                      color: activeTab === tab.id ? '#fff' : '#71717a',
-                    }}
-                  >
-                    <span style={{ fontSize: 16 }}>{tab.icon}</span>
-                    {tab.label}
-                  </button>
-                ))}
-                <div style={{
-                  display: 'flex', alignItems: 'center', gap: 6,
-                  padding: '6px 12px', borderRadius: 8,
-                  background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)',
-                  marginTop: 4,
-                }}>
-                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e' }} />
-                  <span style={{ fontSize: 11, color: '#22c55e', fontWeight: 500 }}>Live</span>
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="fixed top-14 left-0 right-0 bg-bg-card border-b border-border-subtle p-2 z-50 flex flex-col gap-0.5"
+              >
+                {TABS.map(tab => {
+                  const Icon = tab.icon
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => navigate(tab.id)}
+                      className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs font-medium border-none cursor-pointer transition-colors ${
+                        activeTab === tab.id
+                          ? 'bg-accent text-white'
+                          : 'bg-transparent text-text-muted'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      {tab.label}
+                    </button>
+                  )
+                })}
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-bg border border-green/20 mt-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green" />
+                  <span className="text-[11px] text-green font-medium">Live</span>
                 </div>
-              </div>
+              </motion.div>
             )}
           </>
         ) : (
           <>
-            <nav style={{ display: 'flex', gap: 2, flex: 1 }}>
-              {TABS.map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => navigate(tab.id)}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 6,
-                    padding: '8px 16px', borderRadius: 8,
-                    fontSize: 13, fontWeight: 500, border: 'none', cursor: 'pointer',
-                    background: activeTab === tab.id ? '#6366f1' : 'transparent',
-                    color: activeTab === tab.id ? '#fff' : '#71717a',
-                    transition: 'all 0.15s ease',
-                  }}
-                >
-                  <span style={{ fontSize: 16 }}>{tab.icon}</span>
-                  {tab.label}
-                </button>
-              ))}
+            <nav className="flex gap-0.5 flex-1">
+              {TABS.map(tab => {
+                const Icon = tab.icon
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => navigate(tab.id)}
+                    className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium border-none cursor-pointer transition-all ${
+                      activeTab === tab.id
+                        ? 'bg-accent text-white'
+                        : 'bg-transparent text-text-muted hover:text-text-primary'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {tab.label}
+                  </button>
+                )
+              })}
             </nav>
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '6px 12px', borderRadius: 8,
-              background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)',
-            }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e' }} />
-              <span style={{ fontSize: 11, color: '#22c55e', fontWeight: 500 }}>Live</span>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-bg border border-green/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-green" />
+              <span className="text-[11px] text-green font-medium">Live</span>
             </div>
           </>
         )}
